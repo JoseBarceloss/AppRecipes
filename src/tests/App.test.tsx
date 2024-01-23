@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
 import { renderWithRouter } from './helpers/renderWithRouter';
@@ -27,6 +27,16 @@ describe('Testa página de Login', () => {
     await user.type(password, passwordType);
 
     expect(button).toBeEnabled();
+
+    await user.click(button);
+  });
+
+  it('Verifica se a página Login renderiza o botão de registro corretamente e se comporta como o esperado', async () => {
+    renderWithRouter(<App />);
+    const user = userEvent.setup();
+
+    const button = screen.getByRole('button', { name: /register/i });
+    expect(button).toBeInTheDocument();
 
     await user.click(button);
   });
