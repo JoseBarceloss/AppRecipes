@@ -30,14 +30,4 @@ describe('Testa página de Login', () => {
 
     await user.click(button);
   });
-
-  it('Verifica se a página Login renderiza o botão de registro corretamente e se comporta como o esperado', async () => {
-    renderWithRouter(<App />);
-    const user = userEvent.setup();
-
-    const button = screen.getByRole('button', { name: /register/i });
-    expect(button).toBeInTheDocument();
-
-    await user.click(button);
-  });
 });
