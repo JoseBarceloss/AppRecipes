@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-// import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import RecipesContext from '../../context/AppRecipesContext';
 import searchIcon from '../../images/searchIcon.svg';
 
@@ -13,8 +13,8 @@ function SearchBar() {
   const [searchOption, setSearchOption] = useState('');
   const [searchData, setSearchData] = useState('');
   const { recipes, setRecipes } = useContext(RecipesContext);
-  // const location = useLocation();
-  // const navigate = useNavigate();
+  const location = useLocation();
+  const navigate = useNavigate();
   /**
 |--------------------------------------------------
 | CONSTANTES
@@ -40,14 +40,15 @@ function SearchBar() {
     }
 
     let endpoint = '';
+    const baseEndpoint = location.pathname.includes('drinks') ? 'https://www.thecocktaildb.com/api/json/v1/1' : 'https://www.themealdb.com/api/json/v1/1';
+
     if (searchOption === INGREDIENT) {
-      endpoint = `https://www.themealdb.com/api/json/v1/1/filter.php?i=${searchData}`;
+      endpoint = `${baseEndpoint}/filter.php?i=${searchData}`;
     } else if (searchOption === NAME) {
-      endpoint = `https://www.themealdb.com/api/json/v1/1/search.php?s=${searchData}`;
+      endpoint = `${baseEndpoint}/search.php?s=${searchData}`;
     } else if (searchOption === FIRST_LETTER) {
-      endpoint = `https://www.themealdb.com/api/json/v1/1/search.php?f=${searchData}`;
+      endpoint = `${baseEndpoint}/search.php?f=${searchData}`;
     }
-    console.log(endpoint);
 
     try {
       const response = await fetch(endpoint);
@@ -55,7 +56,14 @@ function SearchBar() {
         throw new Error(response.statusText);
       }
       const data = await response.json();
-      setRecipes(data.meals);
+      const results = data.meals || data.drinks;
+      setRecipes(results);
+
+      if (results && results.length === 1) {
+        const path = location.pathname.includes('drinks')
+          ? `/drinks/${results[0].idDrink}` : `/meals/${results[0].idMeal}`;
+        navigate(path);
+      }
     } catch (error) {
       console.error(error);
     }
