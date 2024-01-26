@@ -8,7 +8,11 @@ function SearchBar() {
   |--------------------------------------------------
   */
   const [searchInput, setSearchInput] = useState(false);
-
+  const [searchOption, setSearchOption] = useState('');
+  const [searchData, setSearchData] = useState('');
+  const handleRadioButton = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchOption(e.target.value);
+  };
   return (
     <div>
       {searchInput && (
@@ -19,6 +23,8 @@ function SearchBar() {
               id="search"
               data-testid="search-input"
               placeholder="Search"
+              value={ searchData }
+              onChange={ (e) => setSearchData(e.target.value) }
             />
             <button
               type="button"
@@ -35,6 +41,8 @@ function SearchBar() {
                 data-testid="ingredient-search-radio"
                 placeholder="Search"
                 value="ingredient"
+                checked={ searchOption === 'ingredient' }
+                onChange={ handleRadioButton }
               />
               Search by ingredient
             </label>
@@ -45,6 +53,8 @@ function SearchBar() {
                 data-testid="name-search-radio"
                 placeholder="Search"
                 value="name"
+                checked={ searchOption === 'name' }
+                onChange={ handleRadioButton }
               />
               Search by name
             </label>
@@ -55,6 +65,8 @@ function SearchBar() {
                 data-testid="first-letter-search-radio"
                 placeholder="Search"
                 value="first-letter"
+                checked={ searchOption === 'first-letter' }
+                onChange={ handleRadioButton }
               />
               Search by first letter
             </label>
