@@ -3,13 +3,23 @@ import { useLocation, Link } from 'react-router-dom';
 import iconPerfil from '../../images/profileIcon.svg';
 import searchIcon from '../../images/searchIcon.svg';
 import SearchBar from '../SearchBar';
+// import { pathsWithoutSearchIcon } from '../../types';
 
 function Header() {
-  const [searchInput, setSearchInput] = React.useState(false);
+  // const [searchInput, setSearchInput] = React.useState(false); retirado do componente
   const [titlePage, setTitlePage] = React.useState('');
-  const location = useLocation();
+  const { pathname } = useLocation();
+  /**
+|--------------------------------------------------
+| A função abaixo verifica se o pathname é diferente de /profile, /done-recipes e /favorite-recipes
+| e se sim retorna True, caso contrário retorna False
+|--------------------------------------------------
+*/
+  const shouldShowSearchIcon = () => {
+    return !['/profile', '/done-recipes', '/favorite-recipes'].includes(pathname);
+  };
   React.useEffect(() => {
-    switch (location.pathname) {
+    switch (pathname) {
       case '/drinks':
         setTitlePage('Drinks');
         break;
@@ -28,7 +38,7 @@ function Header() {
       default:
         break;
     }
-  }, [location.pathname]);
+  }, [pathname]);
 
   return (
     <header>
@@ -40,23 +50,18 @@ function Header() {
             alt="Imagem do Perfil"
           />
         </Link>
-        {(location.pathname === '/meals'
-          || location.pathname === '/drinks') && (
-            <button
-              onClick={ () => {
-                setSearchInput(!searchInput);
-              } }
-            >
-              <img
-                data-testid="search-top-btn"
-                src={ searchIcon }
-                alt="searchIcon"
-              />
-            </button>
+        {/* Alterei a posição do título que estava antes do botão pesquisar */}
+
+        {(pathname === '/meals'
+          || pathname === '/drinks')
+          ? (<h1 data-testid="page-title">{titlePage}</h1>) : (<h1>{titlePage}</h1>)}
+        {shouldShowSearchIcon() && (
+          <span>
+            <SearchBar />
+          </span>
         )}
       </div>
-      <h1 data-testid="page-title">{titlePage}</h1>
-      {searchInput && <SearchBar />}
+      {/* Alterei a lógica da barra de pesquisa e passei a responsabilidade para o componente SearchBar */}
     </header>
   );
 }
