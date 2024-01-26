@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import iconPerfil from '../../images/profileIcon.svg';
-import searchIcon from '../../images/searchIcon.svg';
+// import searchIcon from '../../images/searchIcon.svg';
 import SearchBar from '../SearchBar';
 // import { pathsWithoutSearchIcon } from '../../types';
 
@@ -54,7 +54,8 @@ function Header() {
 
         {(pathname === '/meals'
           || pathname === '/drinks')
-          ? (<h1 data-testid="page-title">{titlePage}</h1>) : (<h1>{titlePage}</h1>)}
+          ? (<h1 data-testid="page-title">{titlePage}</h1>)
+          : (<h1 data-testid="page-title">{titlePage}</h1>)}
         {shouldShowSearchIcon() && (
           <span>
             <SearchBar />
