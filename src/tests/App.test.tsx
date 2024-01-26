@@ -1,8 +1,11 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 import App from '../App';
-import { renderWithRouter } from './helpers/renderWithRouter';
+import renderWithRouter from './helpers/renderWithRouter';
+import Header from '../Components/Header';
+import SearchBar from '../Components/SearchBar';
 
 describe('Testa página de Login', () => {
   it('Verifica se a página Login renderiza o formulário de usuário corretamente e se comporta como o esperado', async () => {
@@ -29,5 +32,124 @@ describe('Testa página de Login', () => {
     expect(button).toBeEnabled();
 
     await user.click(button);
+  });
+});
+
+describe('Testa o componente Header', () => {
+  const PAGE_TITLE_TESTID = 'page-title';
+
+  it('Verifica se o header é renderizado corretamente', () => {
+    renderWithRouter(<Header />);
+    const header = screen.getByRole('banner');
+    expect(header).toBeInTheDocument();
+  });
+  it('Verifica a atualização do título ao navegar para uma rota desconhecida', () => {
+    render(
+      <MemoryRouter initialEntries={ ['/unknown-route'] }>
+        <Header />
+      </MemoryRouter>,
+    );
+    const pageTitle = screen.getByTestId(PAGE_TITLE_TESTID);
+    expect(pageTitle).toHaveTextContent('');
+  });
+
+  it('Verifica a atualização do título ao navegar para uma rota não mapeada', () => {
+    const { getByTestId } = renderWithRouter(<Header />, { route: '/unknown-route' });
+
+    const pageTitle = getByTestId(PAGE_TITLE_TESTID);
+    expect(pageTitle).toHaveTextContent('');
+  });
+
+  it('Verifica exibição do título correto para a rota padrão', () => {
+    const { getByTestId } = renderWithRouter(<Header />, { route: '/' });
+
+    const pageTitle = getByTestId(PAGE_TITLE_TESTID);
+    expect(pageTitle).toHaveTextContent('');
+  });
+
+  it('Verifica exibição do título correto para a rota de bebidas', () => {
+    const { getByTestId } = renderWithRouter(<Header />, { route: '/drinks' });
+
+    const pageTitle = getByTestId(PAGE_TITLE_TESTID);
+    expect(pageTitle).toHaveTextContent('Drinks');
+  });
+
+  it('Verifica se a rota do header para drinks está adequada', () => {
+    renderWithRouter(<App />, { route: '/drinks' });
+    expect(window.location.pathname).toBe('/drinks');
+    const tittle = screen.getByRole('heading', { name: 'Drinks', level: 1 });
+    expect(tittle).toBeInTheDocument();
+  });
+
+  it('Verifica se a rota do header para DoneRecipes está adequada', () => {
+    renderWithRouter(<App />, { route: '/done-recipes' });
+    expect(window.location.pathname).toBe('/done-recipes');
+    const tittle = screen.getByRole('heading', { name: 'Done Recipes', level: 1 });
+    expect(tittle).toBeInTheDocument();
+  });
+
+  it('Verifica se a rota do header para meals está adequada', () => {
+    renderWithRouter(<App />, { route: '/meals' });
+    expect(window.location.pathname).toBe('/meals');
+    const tittle = screen.getByRole('heading', { name: 'Meals', level: 1 });
+    expect(tittle).toBeInTheDocument();
+  });
+
+  it('Verifica rota e exibição do header para favorite-recipes', () => {
+    renderWithRouter(<App />, { route: '/favorite-recipes' });
+    expect(window.location.pathname).toBe('/favorite-recipes');
+    const tittle = screen.getByRole('heading', { name: 'Favorite Recipes', level: 1 });
+    expect(tittle).toBeInTheDocument();
+  });
+
+  it('Verifica rota e exibição do header para profile', () => {
+    renderWithRouter(<App />, { route: '/profile' });
+    expect(window.location.pathname).toBe('/profile');
+    const tittle = screen.getByRole('heading', { name: 'Profile', level: 1 });
+    expect(tittle).toBeInTheDocument();
+  });
+
+  it('Testa o Header nas rotas', async () => {
+    const routes = [
+      '',
+      'meals',
+      'drinks',
+      'meals/1',
+      'drinks/1',
+      'meals/1/in-progress',
+      'drinks/1/in-progress',
+      'profile',
+      'done-recipes',
+      'favorite-recipes',
+    ];
+    routes.forEach((route) => {
+      render(
+        <MemoryRouter initialEntries={ [`/${route}`] }>
+          <App />
+        </MemoryRouter>,
+      );
+    });
+  });
+
+  it('Verifica se o header renderiza o botão de perfil', () => {
+    renderWithRouter(<Header />);
+    const profileButton = screen.getByTestId('profile-top-btn');
+    expect(profileButton).toBeInTheDocument();
+  });
+
+  describe('Testes Adicionais para o Componente SearchBar', () => {
+    it('Renderiza o componente SearchBar', () => {
+      render(<SearchBar />);
+      const entradaPesquisa = screen.getByTestId('search-input');
+
+      expect(entradaPesquisa).toBeInTheDocument();
+    });
+
+    it('Verifica se o componente SearchBar possui um input', () => {
+      render(<SearchBar />);
+      const entradaPesquisa = screen.getByTestId('search-input');
+
+      expect(entradaPesquisa).toBeInTheDocument();
+    });
   });
 });
