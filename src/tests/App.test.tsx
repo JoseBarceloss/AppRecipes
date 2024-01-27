@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import App from '../App';
@@ -151,5 +151,38 @@ describe('Testa o componente Header', () => {
 
       expect(entradaPesquisa).toBeInTheDocument();
     });
+  });
+});
+describe('Testa o componente SearchBar', () => {
+  it('Renderiza o componente SearchBar', () => {
+    render(<SearchBar />);
+    const entradaPesquisa = screen.getByTestId('search-input');
+    expect(entradaPesquisa).toBeInTheDocument();
+  });
+
+  it('Verifica se o componente SearchBar possui um input', () => {
+    render(<SearchBar />);
+    const entradaPesquisa = screen.getByTestId('search-input');
+    expect(entradaPesquisa).toBeInTheDocument();
+  });
+
+  it('Verifica se o botão de pesquisa está funcionando corretamente', () => {
+    render(<SearchBar />);
+    const botaoPesquisa = screen.getByTestId('exec-search-btn');
+    expect(botaoPesquisa).toBeInTheDocument();
+    fireEvent.click(botaoPesquisa);
+  });
+
+  it('Verifica se os botões de rádio estão funcionando corretamente', () => {
+    render(<SearchBar />);
+    const botaoRadioIngrediente = screen.getByTestId('ingredient-search-radio');
+    const botaoRadioNome = screen.getByTestId('name-search-radio');
+    const botaoRadioPrimeiraLetra = screen.getByTestId('first-letter-search-radio');
+    expect(botaoRadioIngrediente).toBeInTheDocument();
+    expect(botaoRadioNome).toBeInTheDocument();
+    expect(botaoRadioPrimeiraLetra).toBeInTheDocument();
+    fireEvent.click(botaoRadioIngrediente);
+    fireEvent.click(botaoRadioNome);
+    fireEvent.click(botaoRadioPrimeiraLetra);
   });
 });
