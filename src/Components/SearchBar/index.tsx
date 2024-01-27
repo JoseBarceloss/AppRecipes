@@ -20,7 +20,7 @@ function SearchBar() {
 | CONSTANTES
 |--------------------------------------------------
 */
-  // const ALERT_MESSAGE_FOUND = "Sorry, we haven't found any recipes for these filters.";
+  const ALERT_MESSAGE_FOUND = "Sorry, we haven't found any recipes for these filters";
   const ALERT_MESSAGE_ONE_CHAR = 'Your search must have only 1 (one) character';
   const FIRST_LETTER = 'first-letter';
   const INGREDIENT = 'ingredient';
@@ -63,6 +63,8 @@ function SearchBar() {
         const path = location.pathname.includes('drinks')
           ? `/drinks/${results[0].idDrink}` : `/meals/${results[0].idMeal}`;
         navigate(path);
+      } else if (!results || results.length === 0) {
+        window.alert(ALERT_MESSAGE_FOUND);
       }
     } catch (error) {
       console.error(error);
