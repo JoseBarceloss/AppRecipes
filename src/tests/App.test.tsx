@@ -1,11 +1,12 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import App from '../App';
 import renderWithRouter from './helpers/renderWithRouter';
 import Header from '../Components/Header';
 import SearchBar from '../Components/SearchBar';
+import Footer from '../Components/Footer';
 
 describe('Testa página de Login', () => {
   it('Verifica se a página Login renderiza o formulário de usuário corretamente e se comporta como o esperado', async () => {
@@ -184,5 +185,36 @@ describe('Testa o componente SearchBar', () => {
     fireEvent.click(botaoRadioIngrediente);
     fireEvent.click(botaoRadioNome);
     fireEvent.click(botaoRadioPrimeiraLetra);
+  });
+});
+
+describe('Componente Footer', () => {
+  it('renderiza o footer com estilos corretos', () => {
+    render(<Footer />);
+
+    const footer = screen.getByTestId('footer');
+
+    expect(footer).toHaveStyle({
+      position: 'fixed',
+      bottom: '0',
+      left: '0',
+      width: '100%',
+      backgroundColor: '#f2f2f2',
+      textAlign: 'center',
+      padding: '10px 0',
+      zIndex: '999',
+    });
+  });
+
+  it('renderiza links de bebidas e refeições com atributos corretos', () => {
+    act(() => {
+      render(<Footer />);
+    });
+
+    const drinksLink = screen.getByTestId('drinks-bottom-btn').closest('a');
+    const mealsLink = screen.getByTestId('meals-bottom-btn').closest('a');
+
+    expect(drinksLink).toHaveAttribute('href', '/drinks');
+    expect(mealsLink).toHaveAttribute('href', '/meals');
   });
 });

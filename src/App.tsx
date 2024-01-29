@@ -9,6 +9,7 @@ import RecipeDetails from './Pages/RecipeDetails';
 import RecipeInProgress from './Pages/RecipeInProgress';
 import DoneRecipes from './Pages/Done Recipes';
 import Provider from './context/AppRecipesProvider';
+import Footer from './Components/Footer';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/profile" element={ <Profile /> } />
           <Route path="*" element={ <h1>Not Found</h1> } />
         </Routes>
+        <Footer />
       </div>
     </Provider>
   );
