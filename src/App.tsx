@@ -18,8 +18,8 @@ function App() {
       <div>
         <Routes>
           <Route path="/" element={ <Login /> } />
-          <Route path="/meals" element={ <Recipes /> } />
-          <Route path="/drinks" element={ <Recipes /> } />
+          <Route path="/meals" element={ <Recipes isDrinks={ false } /> } />
+          <Route path="/drinks" element={ <Recipes isDrinks /> } />
           <Route path="/meals/:id" element={ <RecipeDetails /> } />
           <Route path="/drinks/:id" element={ <RecipeDetails /> } />
           <Route path="/favorite-recipes" element={ <FavoriteRecipes /> } />
