@@ -1,0 +1,38 @@
+.recommendation-container {
+    margin-top: 20px;
+  }
+  
+  .recommendation-carousel {
+    display: flex;
+    overflow-x: scroll;
+    gap: 10px;
+    padding: 10px 0;
+  }
+  
+  .recommendation-card {
+    flex: 0 0 auto;
+    width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .recommendation-card img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+  }
+
+  .start-recipe-btn {
+    z-index: 1000;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
