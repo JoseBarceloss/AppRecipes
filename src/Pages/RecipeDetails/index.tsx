@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import './RecipeDetails.css';
 import { useNavigate } from 'react-router-dom';
 import shareIcon from '../../images/shareIcon.svg';
+import blackHeartIcon from '../../images/blackHeartIcon.svg';
+import whiteHeartIcon from '../../images/whiteHeartIcon.svg';
 import { DataProp } from '../../types';
 
 function RecipeDetails() {
@@ -10,6 +12,7 @@ function RecipeDetails() {
   const [recipeDone, setRecipeDone] = useState<boolean>(false);
   const [recipeInProgress, setRecipeInProgress] = useState<boolean>(false);
   const [linkCopiedMessage, setLinkCopiedMessage] = useState<boolean>(false);
+  const [favoritado, setFavoritado] = useState(false);
 
   const fetchRecommendation = async () => {
     const recommendationApiUrl = window.location.pathname.split('/')[1] === 'meals'
@@ -74,30 +77,59 @@ function RecipeDetails() {
     });
   };
 
+  useEffect(() => {
+    const fetchDataAndCheckStatus = async () => {
+      await fetchData();
+      const receitasFavoritas = JSON
+        .parse(localStorage.getItem('favoriteRecipes') || '[]');
+      const isFavorite = receitasFavoritas
+        .some((recipe: any) => recipe.id === criarObjetoDeReceita().id);
+      setFavoritado(isFavorite);
+      const inProgressRecipes = JSON.parse(localStorage
+        .getItem('inProgressRecipes') || '{}');
+      const page = window.location.pathname.split('/')[1];
+      const bolean = Object.keys(inProgressRecipes[page] || {})
+        .includes(window.location.pathname.split('/')[2]);
+      setRecipeInProgress(bolean);
+    };
+    fetchDataAndCheckStatus();
+  }, []);
+
+  const toggleFavorito = () => {
+    const receitaFavorita = criarObjetoDeReceita();
+    const receitasFavoritas = JSON.parse(localStorage.getItem('favoriteRecipes') || '[]');
+
+    const novaListaFavorita = favoritado
+      ? receitasFavoritas.filter((recipe: any) => recipe.id !== receitaFavorita.id)
+      : [...receitasFavoritas, receitaFavorita];
+
+    localStorage.setItem('favoriteRecipes', JSON.stringify(novaListaFavorita));
+    setFavoritado(!favoritado);
+  };
+
   console.log(recipeData);
 
-  // function saveToLocalStorage(userEmail: string, doneRecipes: Array<any>) {
-  //   const user = {
-  //     email: userEmail,
-  //   };
-  //   localStorage.setItem('doneRecipes', JSON.stringify(doneRecipes));
-  // }
+  function criarObjetoDeReceita() {
+    const data = recipeData;
 
-  // const userEmail = localStorage.getItem('user') as string;
-  // const doneRecipes = [
-  //   {
-  //     id: window.location.pathname.split('/')[2],
-  //     type: window.location.pathname.split('/')[1],
-  //     nationality: recipeData?.strArea || '',
-  //     category: recipeData?.strCategory || '',
-  //     alcoholicOrNot: recipeData?.strAlcoholic,
-  //     name:recipeData?.strDrink || recipeData?.strMeal,
-  //     image: recipeData?.strDrinkThumb || recipeData?.strMealThumb,
-  //     doneDate: 'nao sei ',
-  //     tags: 'nao sei ainda',
-  //   },
-  // ];
-  // saveToLocalStorage(userEmail, doneRecipes);
+    const hoje = new Date();
+    const dia = hoje.getDate();
+    const mes = hoje.getMonth() + 1;
+    const ano = hoje.getFullYear();
+
+    const dataAtualFormatada = `${ano}-${mes < 10 ? `0${mes}`
+      : mes}-${dia < 10 ? `0${dia}` : dia}`;
+
+    return {
+      id: window.location.pathname.split('/')[2],
+      type: window.location.pathname.split('/')[1] === 'meals' ? 'meal' : 'drink',
+      nationality: data?.strArea || '',
+      category: data?.strCategory || '',
+      alcoholicOrNot: data?.strAlcoholic || '',
+      name: data?.strDrink || data?.strMeal,
+      image: data?.strDrinkThumb || data?.strMealThumb,
+    };
+  }
 
   return (
     <div>
@@ -189,7 +221,17 @@ function RecipeDetails() {
         <img src={ shareIcon } alt="Share icon" />
         Compartilhar
       </button>
-      <button data-testid="favorite-btn">favoritar</button>
+      <button onClick={ toggleFavorito }>
+        {favoritado ? (
+          <img
+            data-testid="favorite-btn"
+            src={ blackHeartIcon }
+            alt="Favorito preenchido"
+          />
+        ) : (
+          <img data-testid="favorite-btn" src={ whiteHeartIcon } alt="Favorito vazio" />
+        )}
+      </button>
     </div>
   );
 }

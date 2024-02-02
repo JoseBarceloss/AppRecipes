@@ -7,6 +7,7 @@ import renderWithRouter from './helpers/renderWithRouter';
 import Header from '../Components/Header';
 import SearchBar from '../Components/SearchBar';
 import Footer from '../Components/Footer';
+import RecipeDetails from '../Pages/RecipeDetails';
 
 describe('Testa página de Login', () => {
   it('Verifica se a página Login renderiza o formulário de usuário corretamente e se comporta como o esperado', async () => {
