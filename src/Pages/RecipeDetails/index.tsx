@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './RecipeDetails.css';
+import { useNavigate } from 'react-router-dom';
+import shareIcon from '../../images/shareIcon.svg';
 
 interface DataProp {
   strMeal: string;
@@ -16,6 +18,10 @@ interface DataProp {
 function RecipeDetails() {
   const [recipeData, setRecipeData] = useState<DataProp | null>(null);
   const [recommendationData, setRecommendationData] = useState<DataProp[]>([]);
+  const [recipeDone, setRecipeDone] = useState<boolean>(false);
+  const [recipeInProgress, setRecipeInProgress] = useState<boolean>(false);
+  const [linkCopied, setLinkCopied] = useState<boolean>(false);
+  const [linkCopiedMessage, setLinkCopiedMessage] = useState<boolean>(false);
 
   const fetchRecommendation = async () => {
     const recommendationApiUrl = window.location.pathname.split('/')[1] === 'meals'
@@ -31,6 +37,8 @@ function RecipeDetails() {
         : recommendationResponse.meals.slice(0, 6),
     );
   };
+
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     const id = window.location.pathname.split('/')[2];
@@ -49,6 +57,16 @@ function RecipeDetails() {
 
   useEffect(() => {
     fetchData();
+    const checkDone = () => {
+      const inProgressRecipes = localStorage.getItem('inProgressRecipes');
+      if (inProgressRecipes) {
+        const page = window.location.pathname.split('/')[1];
+        const Name = JSON.parse(inProgressRecipes)[page];
+        const bolean = Object.keys(Name).includes(window.location.pathname.split('/')[2]);
+        setRecipeInProgress(bolean);
+      }
+    };
+    checkDone();
   }, []);
 
   useEffect(() => {
@@ -57,8 +75,31 @@ function RecipeDetails() {
     }
   }, [recipeData]);
 
+  const copyToClipboard = () => {
+    const recipeLink = window.location.href;
+
+    navigator.clipboard.writeText(recipeLink).then(() => {
+      setLinkCopiedMessage(true);
+      setTimeout(() => {
+        setLinkCopiedMessage(false);
+      }, 3000);
+    });
+  };
+
+  console.log(recipeData);
+
+  // const saveLocalStorage = (recipeData: Array<any>) => {
+  //   const saveRecipes = recipeData.map((recipe) => ({
+  //     id: window.location.pathname.split('/')[2],
+  //     type: window.location.pathname.split('/')[1],
+  //     nationality: recipe.
+
+  //   }));
+  // }
+
   return (
     <div>
+      {linkCopiedMessage && <p data-testid="link-copied-message">Link copied!</p>}
       {recipeData ? (
         <div>
           <h1 data-testid="recipe-title">{recipeData.strMeal || recipeData.strDrink}</h1>
@@ -130,12 +171,23 @@ function RecipeDetails() {
       ) : (
         <p>Carregando...</p>
       )}
-      <button
-        className="start-recipe-btn"
-        data-testid="start-recipe-btn"
-      >
-        Start Recipe
+      {recipeDone ? null : (
+        <button
+          className="start-recipe-btn"
+          data-testid="start-recipe-btn"
+          onClick={ () => {
+            navigate(`/${window.location.pathname
+              .split('/')[1]}/${window.location.pathname.split('/')[2]}/in-progress`);
+          } }
+        >
+          {recipeInProgress ? 'Continue Recipe' : 'Start Recipe'}
+        </button>
+      )}
+      <button data-testid="share-btn" onClick={ copyToClipboard }>
+        <img src={ shareIcon } alt="Share icon" />
+        Compartilhar
       </button>
+      <button data-testid="favorite-btn">favoritar</button>
     </div>
   );
 }
