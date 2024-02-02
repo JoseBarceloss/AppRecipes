@@ -2,25 +2,13 @@ import React, { useEffect, useState } from 'react';
 import './RecipeDetails.css';
 import { useNavigate } from 'react-router-dom';
 import shareIcon from '../../images/shareIcon.svg';
-
-interface DataProp {
-  strMeal: string;
-  strDrink: string;
-  strMealThumb: string;
-  strDrinkThumb: string;
-  strCategory: string;
-  strAlcoholic: string;
-  strInstructions: string;
-  strYoutube: string | null;
-  [index: string]: any;
-}
+import { DataProp } from '../../types';
 
 function RecipeDetails() {
   const [recipeData, setRecipeData] = useState<DataProp | null>(null);
   const [recommendationData, setRecommendationData] = useState<DataProp[]>([]);
   const [recipeDone, setRecipeDone] = useState<boolean>(false);
   const [recipeInProgress, setRecipeInProgress] = useState<boolean>(false);
-  const [linkCopied, setLinkCopied] = useState<boolean>(false);
   const [linkCopiedMessage, setLinkCopiedMessage] = useState<boolean>(false);
 
   const fetchRecommendation = async () => {
@@ -88,14 +76,28 @@ function RecipeDetails() {
 
   console.log(recipeData);
 
-  // const saveLocalStorage = (recipeData: Array<any>) => {
-  //   const saveRecipes = recipeData.map((recipe) => ({
+  // function saveToLocalStorage(userEmail: string, doneRecipes: Array<any>) {
+  //   const user = {
+  //     email: userEmail,
+  //   };
+  //   localStorage.setItem('doneRecipes', JSON.stringify(doneRecipes));
+  // }
+
+  // const userEmail = localStorage.getItem('user') as string;
+  // const doneRecipes = [
+  //   {
   //     id: window.location.pathname.split('/')[2],
   //     type: window.location.pathname.split('/')[1],
-  //     nationality: recipe.
-
-  //   }));
-  // }
+  //     nationality: recipeData?.strArea || '',
+  //     category: recipeData?.strCategory || '',
+  //     alcoholicOrNot: recipeData?.strAlcoholic,
+  //     name:recipeData?.strDrink || recipeData?.strMeal,
+  //     image: recipeData?.strDrinkThumb || recipeData?.strMealThumb,
+  //     doneDate: 'nao sei ',
+  //     tags: 'nao sei ainda',
+  //   },
+  // ];
+  // saveToLocalStorage(userEmail, doneRecipes);
 
   return (
     <div>
