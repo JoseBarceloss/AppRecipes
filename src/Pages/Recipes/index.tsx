@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecipes } from '../../hooks/useRecipes';
 import { useCategories } from '../../hooks/useCategories';
+import Footer from '../../Components/Footer';
 
 function Recipes({ isDrinks }: { isDrinks: boolean }) {
   const { recipes, setRecipes } = useRecipes(isDrinks);
@@ -71,6 +72,7 @@ function Recipes({ isDrinks }: { isDrinks: boolean }) {
             </Link>
           </div>
         ))}
+        <Footer />
       </div>
     );
   }
@@ -103,8 +105,11 @@ function Recipes({ isDrinks }: { isDrinks: boolean }) {
           </Link>
         </div>
       ))}
+      <Footer />
     </div>
   );
 }
+
+// b
 
 export default Recipes;
