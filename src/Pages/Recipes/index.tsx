@@ -110,4 +110,6 @@ function Recipes({ isDrinks }: { isDrinks: boolean }) {
   );
 }
 
+// b
+
 export default Recipes;
