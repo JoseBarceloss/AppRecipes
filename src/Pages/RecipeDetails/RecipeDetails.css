@@ -24,16 +24,16 @@
 }
 
 .start-recipe-btn {
-  bottom: 0;
   background-color: #4caf50;
+  bottom: 0;
   border: none;
   border-radius: 5px;
   color: white;
   cursor: pointer;
   left: 50%;
   margin-left: 75px;
-  position: fixed;
   padding: 10px 20px;
+  position: fixed;
   transform: translateX(-50%);
   z-index: 1000;
 }
