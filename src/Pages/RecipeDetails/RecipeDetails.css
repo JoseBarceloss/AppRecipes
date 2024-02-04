@@ -25,9 +25,9 @@
 
 .start-recipe-btn {
   background-color: #4caf50;
-  bottom: 0;
   border: none;
   border-radius: 5px;
+  bottom: 0;
   color: white;
   cursor: pointer;
   left: 50%;
