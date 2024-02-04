@@ -14,3 +14,13 @@ export interface DataProp {
   strYoutube: string | null;
   [index: string]: any;
 }
+
+export type DoneRecipesProps = {
+  alcoholicOrNot: string,
+  category: string,
+  doneDate: string,
+  image: string,
+  name: string,
+  nationality: string,
+  type: string,
+};
