@@ -16,12 +16,13 @@ export interface DataProp {
 }
 
 export type DoneRecipesProps = {
+  id: string,
   alcoholicOrNot: string,
   category: string,
   doneDate: string,
   image: string,
   name: string,
   nationality: string,
-  type: string,
-  tags: [string],
+  type: 'meal' | 'drink',
+  tags: string[],
 };

@@ -1,26 +1,53 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../../Components/Header';
 import { DoneRecipesProps } from '../../types';
+import { doneRecipesStorage } from '../../utils/localstorage';
 
 function DoneRecipes() {
-  const [doneRecipes, setDoneRecipes] = useState<DoneRecipesProps[]>();
+  const [doneRecipes, setDoneRecipes] = useState<DoneRecipesProps[]>([]);
+  const [msgIndex, setMsgIndex] = useState<number>();
+  const [recipeList, setRecipeList] = useState<DoneRecipesProps[]>([]);
+
+  const [meal, setMeal] = useState<DoneRecipesProps[]>([]);
+  const [drink, setDrink] = useState<DoneRecipesProps[]>([]);
 
   useEffect(() => {
-    const doneRecipesStorage = JSON.parse(localStorage.getItem('doneRecipes') || '[]');
-    setDoneRecipes(doneRecipesStorage);
+    setDoneRecipes(doneRecipesStorage());
+    setRecipeList(doneRecipesStorage());
   }, []);
 
+  useEffect(() => {
+    doneRecipes.forEach((recipe) => {
+      if (recipe.type === 'meal') {
+        setMeal((recipeData) => [
+          ...recipeData,
+          recipe,
+        ]);
+      } else {
+        setDrink((recipeData) => [
+          ...recipeData,
+          recipe,
+        ]);
+      }
+    });
+  }, [doneRecipes]);
+
   const filterRecipes = (type: string) => {
-    if (type === 'all') {
-      const doneRecipesStorage = JSON.parse(localStorage.getItem('doneRecipes') || '[]');
-      setDoneRecipes(doneRecipesStorage);
+    if (type === 'meal') {
+      setRecipeList(meal);
+    } else if (type === 'drink') {
+      setRecipeList(drink);
     } else {
-      const doneRecipesStorage = JSON.parse(localStorage.getItem('doneRecipes') || '[]');
-      const filteredRecipes = doneRecipesStorage.filter(
-        (recipe: any) => recipe.type === type,
-      );
-      setDoneRecipes(filteredRecipes);
+      setRecipeList(doneRecipes);
     }
+  };
+
+  const shareButton = (id: string, type: string, index: number) => {
+    const url = window.location.href;
+    const newurl = `${url.slice(0, url.length - 12)}${type}s/${id}`;
+    navigator.clipboard.writeText(newurl);
+    setMsgIndex(index);
   };
 
   return (
@@ -51,18 +78,44 @@ function DoneRecipes() {
 
         {/* Renderização das receitas */}
 
-        {doneRecipes && doneRecipes.map((recipe: DoneRecipesProps, index) => (
-          <div key={ index }>
-            <img
-              data-testid={ `${index}-horizontal-image` }
-              src={ recipe.image }
-              alt={ recipe.name }
-            />
-            <p data-testid={ `${index}-horizontal-top-text` }>{recipe.category}</p>
-            <p data-testid={ `${index}-horizontal-name` }>{recipe.name}</p>
+        {recipeList.map((recipe, index) => (
+          <div key={ recipe.id }>
+
+            <Link to={ `/${recipe.type}s/${recipe.id}` }>
+              <img
+                data-testid={ `${index}-horizontal-image` }
+                src={ recipe.image }
+                alt={ recipe.name }
+              />
+              <h3 data-testid={ `${index}-horizontal-name` }>{recipe.name}</h3>
+            </Link>
+
+            {recipe.type === 'meal' ? (
+
+              <p data-testid={ `${index}-horizontal-top-text` }>
+                {`${recipe.nationality} - ${recipe.category}`}
+              </p>
+
+            ) : (
+              <p
+                data-testid={ `${index}-horizontal-top-text` }
+              >
+                {recipe.alcoholicOrNot}
+              </p>
+            )}
+
             <p data-testid={ `${index}-horizontal-done-date` }>{recipe.doneDate}</p>
 
-            <button data-testid={ `${index}-horizontal-share-btn` }>Share</button>
+            <button
+              data-testid={ `${index}-horizontal-share-btn` }
+              onClick={ () => shareButton(recipe.id, recipe.type, index) }
+            >
+              <img
+                data-testid={ `${index}-horizontal-share-btn` }
+                src="src/images/shareIcon.svg"
+                alt="Share recipe"
+              />
+            </button>
 
             {recipe.tags.map((tag) => (
               <span
@@ -72,7 +125,7 @@ function DoneRecipes() {
                 {tag}
               </span>
             ))}
-
+            {index === msgIndex && <span>Link copiado!</span>}
           </div>
         ))}
 
