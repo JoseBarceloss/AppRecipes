@@ -23,4 +23,5 @@ export type DoneRecipesProps = {
   name: string,
   nationality: string,
   type: string,
+  tags: [string],
 };
