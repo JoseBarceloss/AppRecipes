@@ -14,3 +14,27 @@ export interface DataProp {
   strYoutube: string | null;
   [index: string]: any;
 }
+
+export type Recipe = {
+  [x: string]: string
+};
+
+export type RecipeKeys = {
+  name: string,
+  id: string,
+  image: string
+  category: string,
+  ingredients: string,
+  instructions: string
+  video: string
+};
+
+export const RecipeInitialValue = {
+  name: '',
+  id: '',
+  image: '',
+  category: '',
+  ingredients: '',
+  instructions: '',
+  video: '',
+};
