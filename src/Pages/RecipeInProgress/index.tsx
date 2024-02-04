@@ -60,7 +60,22 @@ function RecipeInProgress() {
       <p data-testid="instructions">{recipe?.strInstructions}</p>
       {ingredients.filter((ingr:any) => ingr !== '').map((ing:any, index:any) => (
         <label key={ index } data-testid={ `${index}-ingredient-step` }>
-          <input type="checkbox" />
+          <input
+            type="checkbox"
+            onClick={ ({ target }:any) => {
+              if (target.checked) {
+                target
+                  .parentNode
+                  .style.textDecoration = 'line-through solid rgb(0, 0, 0)';
+              }
+              if (!target.checked) {
+                target
+                  .parentNode
+                  .style.textDecoration = '';
+              }
+              console.log(target.checked);
+            } }
+          />
           {ing}
         </label>
       ))}
