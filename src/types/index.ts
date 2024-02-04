@@ -3,6 +3,10 @@ export type FormLoginType = {
   password: string;
 };
 
+export type Ingredient = {
+  ingredients: string[],
+};
+
 export interface DataProp {
   strMeal: string;
   strDrink: string;
