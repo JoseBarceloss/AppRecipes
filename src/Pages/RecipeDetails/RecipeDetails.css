@@ -4,35 +4,35 @@
 
 .recommendation-carousel {
   display: flex;
-  overflow-x: scroll;
   gap: 10px;
+  overflow-x: scroll;
   padding: 10px 0;
 }
 
 .recommendation-card {
   flex: 0 0 auto;
-  width: 200px;
   border: 1px solid #ccc;
+  width: 200px;
   border-radius: 8px;
   overflow: hidden;
 }
 
 .recommendation-card img {
-  width: 100%;
   height: 120px;
+  width: 100%;
   object-fit: cover;
 }
 
 .start-recipe-btn {
-  z-index: 1000;
   position: fixed;
   bottom: 0;
+  z-index: 1000;
   left: 50%;
+  background-color: #4caf50;
   transform: translateX(-50%);
-  background-color: #4CAF50;
   color: white;
-  padding: 10px 20px;
   border: none;
+  padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
   margin-left: 75px;
