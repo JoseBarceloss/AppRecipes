@@ -1,4 +1,3 @@
-import { string } from 'prop-types';
 import { useEffect, useState } from 'react';
 import { Recipe } from '../../types';
 
@@ -16,11 +15,15 @@ function FilterButtons({ place, setRecipes, set12First }: FilterButtonsProps) {
   const fetchCategories = async () => {
     const response = await fetch(urlToFetch);
     const data = await response.json();
-    console.log(data[place]);
-    setCategories(data[place].slice(0, 5));
+    setCategories([...data[place].slice(0, 5), { strCategory: 'All' }]);
   };
 
   const fetchRecipesCategory = async (category: string) => {
+    if (category === 'All') {
+      set12First();
+      setButtonCategory('');
+      return;
+    }
     const response = await fetch(`https://www.the${place === 'meals' ? 'meal' : 'cocktail'}db.com/api/json/v1/1/filter.php?c=${category}`);
     const data = await response.json();
     if (category === buttonCategory) {
