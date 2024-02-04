@@ -42,8 +42,11 @@ function Header() {
 
   return (
     <header>
-      <div>
-        <Link to="/profile">
+      <div data-testid="profile-top-btn">
+        <Link
+          to="/profile"
+          data-testid="profile-top-btn"
+        >
           <img
             data-testid="profile-top-btn"
             src={ iconPerfil }

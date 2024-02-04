@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import './RecipeDetails.css';
 import { useNavigate } from 'react-router-dom';
+import './RecipeDetails.css';
 import shareIcon from '../../images/shareIcon.svg';
 import blackHeartIcon from '../../images/blackHeartIcon.svg';
 import whiteHeartIcon from '../../images/whiteHeartIcon.svg';
@@ -21,6 +21,7 @@ function RecipeDetails() {
 
     const recommendationResult = await fetch(recommendationApiUrl);
     const recommendationResponse = await recommendationResult.json();
+    console.log(recommendationResponse);
 
     setRecommendationData(
       recommendationResponse.drinks
@@ -42,8 +43,13 @@ function RecipeDetails() {
     }
 
     const result = await fetch(apiUrl);
-    const response = await result.json();
-    setRecipeData(response.meals ? response.meals[0] : response.drinks[0]);
+    if (result.ok) {
+      const response = await result.json();
+      console.log(response);
+      if (response.meals || response.drinks) {
+        setRecipeData(response.meals ? response.meals[0] : response.drinks[0]);
+      }
+    }
   };
 
   useEffect(() => {
@@ -53,8 +59,11 @@ function RecipeDetails() {
       if (inProgressRecipes) {
         const page = window.location.pathname.split('/')[1];
         const Name = JSON.parse(inProgressRecipes)[page];
-        const bolean = Object.keys(Name).includes(window.location.pathname.split('/')[2]);
-        setRecipeInProgress(bolean);
+        if (Name) {
+          const bolean = Object.keys(Name)
+            .includes(window.location.pathname.split('/')[2]);
+          setRecipeInProgress(bolean);
+        }
       }
     };
     checkDone();
@@ -106,8 +115,6 @@ function RecipeDetails() {
     localStorage.setItem('favoriteRecipes', JSON.stringify(novaListaFavorita));
     setFavoritado(!favoritado);
   };
-
-  console.log(recipeData);
 
   function criarObjetoDeReceita() {
     const data = recipeData;

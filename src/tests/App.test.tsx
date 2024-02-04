@@ -1,13 +1,17 @@
 import React from 'react';
 import { fireEvent, render, screen, act } from '@testing-library/react';
+import { vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { BrowserRouter, MemoryRouter } from 'react-router-dom';
 import App from '../App';
 import renderWithRouter from './helpers/renderWithRouter';
 import Header from '../Components/Header';
 import SearchBar from '../Components/SearchBar';
 import Footer from '../Components/Footer';
 import RecipeDetails from '../Pages/RecipeDetails';
+import FavoriteRecipes from '../Pages/FavoriteRecipes';
+
+const input = 'search-input';
 
 describe('Testa página de Login', () => {
   it('Verifica se a página Login renderiza o formulário de usuário corretamente e se comporta como o esperado', async () => {
@@ -142,14 +146,14 @@ describe('Testa o componente Header', () => {
   describe('Testes Adicionais para o Componente SearchBar', () => {
     it('Renderiza o componente SearchBar', () => {
       render(<SearchBar />);
-      const entradaPesquisa = screen.getByTestId('search-input');
+      const entradaPesquisa = screen.getByTestId(input);
 
       expect(entradaPesquisa).toBeInTheDocument();
     });
 
     it('Verifica se o componente SearchBar possui um input', () => {
       render(<SearchBar />);
-      const entradaPesquisa = screen.getByTestId('search-input');
+      const entradaPesquisa = screen.getByTestId(input);
 
       expect(entradaPesquisa).toBeInTheDocument();
     });
@@ -158,13 +162,13 @@ describe('Testa o componente Header', () => {
 describe('Testa o componente SearchBar', () => {
   it('Renderiza o componente SearchBar', () => {
     render(<SearchBar />);
-    const entradaPesquisa = screen.getByTestId('search-input');
+    const entradaPesquisa = screen.getByTestId(input);
     expect(entradaPesquisa).toBeInTheDocument();
   });
 
   it('Verifica se o componente SearchBar possui um input', () => {
     render(<SearchBar />);
-    const entradaPesquisa = screen.getByTestId('search-input');
+    const entradaPesquisa = screen.getByTestId(input);
     expect(entradaPesquisa).toBeInTheDocument();
   });
 
@@ -218,4 +222,162 @@ describe('Componente Footer', () => {
     expect(drinksLink).toHaveAttribute('href', '/drinks');
     expect(mealsLink).toHaveAttribute('href', '/meals');
   });
+});
+
+describe('RecipeDetails', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    // vi.resetAllMocks();
+  });
+  it('verifica compartilhar', () => {
+
+  });
+
+  it('verifica o botao ', async () => {
+    localStorage.setItem('inProgressRecipes', JSON.stringify({
+      drinks: { 17222: [] },
+    }));
+    renderWithRouter(<App />, { route: '/drinks/17222' });
+    await screen.findByText('Continue Recipe');
+  });
+
+  it('verifica bebidas', async () => {
+    const MOCK_JASON = {
+      idDrink: '17222',
+      strAlcoholic: 'Alcoholic',
+      strDrink: 'A1',
+      strIngredient1: 'Gin',
+      strMeasure1: '1 3/4 shot ',
+    };
+
+    const MOCK_JASON2 = {
+      drinks: [
+        {
+          strMeals: 'Corba',
+          strMealThumb: 'teste.jpg',
+        },
+      ],
+    };
+
+    const MOCK_RESPONSE = {
+      ok: true,
+      status: 200,
+      json: async () => MOCK_JASON,
+    } as Response;
+
+    const MOCK_RESPONSE2 = {
+      ok: true,
+      status: 200,
+      json: async () => MOCK_JASON2,
+    } as Response;
+
+    vi.spyOn(global, 'fetch').mockResolvedValueOnce(MOCK_RESPONSE);
+
+    renderWithRouter(<App />, { route: '/drinks/17222' });
+    await screen.findByText('A1');
+    await screen.findByText('Corba');
+    await screen.findByText('Alcoólica: Alcoholic');
+    await screen.findByText('Gin -1 3/4 shot');
+    screen.getByText('Start Recipe');
+  });
+
+  it('verifica se tem o nome da comida com um h1 renderizado', async () => {
+    const MOCK_JASON = {
+      idMeal: '52977',
+      strMeal: 'Corba',
+      strDrinkAlternate: null,
+      strCategory: 'Side',
+      strArea: 'Turkish',
+      strIngredient1: 'Lentils',
+      strMeasure1: '1 cup ',
+      strMealThumb: 'https://www.themealdb.com/images/media/meals/58oia61564916529.jpg',
+      strSource: 'https://findingtimeforcooking.com/main-dishes/red-lentil-soup-corba/',
+      strTags: 'Soup',
+      strYoutube: 'https://www.youtube.com/watch?v=VVnZd8A84z4',
+    };
+
+    const MOCK_JASON2 = {
+      drinks: [
+        {
+          strDrink: 'A1',
+          strDrinkThumb: 'teste.jpg',
+        },
+      ],
+    };
+
+    const MOCK_RESPONSE = {
+      ok: true,
+      status: 200,
+      json: async () => MOCK_JASON,
+    } as Response;
+
+    const MOCK_RESPONSE2 = {
+      ok: true,
+      status: 200,
+      json: async () => MOCK_JASON2,
+    } as Response;
+
+    vi.spyOn(global, 'fetch').mockResolvedValueOnce(MOCK_RESPONSE);
+
+    renderWithRouter(<App />, { route: '/meals/52977' });
+    await screen.findByText('Corba');
+    await screen.findByText('A1');
+    await screen.findByText('Categoria: Side');
+    await screen.findByText('Lentils -1 cup');
+  });
+});
+
+describe('Profile', () => {
+  const localStorageMock = (function () {
+    let store: Record<string, string> = {};
+
+    return {
+      getItem(key: string) {
+        return store[key] || null;
+      },
+      setItem(key: string, value: string) {
+        store[key] = value.toString();
+      },
+      removeItem(key: string) {
+        delete store[key];
+      },
+      clear() {
+        store = {};
+      },
+    };
+  }());
+
+  Object.defineProperty(window, 'localStorage', {
+    value: localStorageMock,
+  });
+
+  it('botao done ', () => {
+    renderWithRouter(<App />, { route: '/profile' });
+    screen.getAllByText('Done Recipes');
+  });
+
+  it('botao favorito', () => {
+    renderWithRouter(<App />, { route: '/profile' });
+    screen.getAllByText('Favorite Recipes');
+  });
+
+  it('botao logout', () => {
+    renderWithRouter(<App />, { route: '/profile' });
+    screen.getAllByText('Logout');
+    fireEvent.click(screen.getByTestId('profile-logout-btn'));
+    expect(localStorage.getItem('user')).toBeNull();
+    expect(window.location.pathname).toBe('/');
+  });
+});
+
+describe('FavoriteRecipes', () => {
+  const local = {
+    alcoholicOrNot: '',
+    category: 'Side',
+    id: '52977',
+    image: 'https://www.themealdb.com/images/media/meals/58oia61564916529.jpg',
+    name: 'Corba',
+    nationality: 'Turkish',
+    type: 'meal',
+  };
 });
