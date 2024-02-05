@@ -4,7 +4,6 @@ import { DataProp, Ingredient } from '../../types';
 import shareIcon from '../../images/shareIcon.svg';
 import blackHeartIcon from '../../images/blackHeartIcon.svg';
 import whiteHeartIcon from '../../images/whiteHeartIcon.svg';
-import './index.css';
 import { criarObjetoDeReceita } from './utils';
 
 function RecipeInProgress() {
