@@ -83,6 +83,7 @@ function DoneRecipes() {
 
             <Link to={ `/${recipe.type}s/${recipe.id}` }>
               <img
+                style={ { width: '100px' } }
                 data-testid={ `${index}-horizontal-image` }
                 src={ recipe.image }
                 alt={ recipe.name }
@@ -107,7 +108,7 @@ function DoneRecipes() {
             <p data-testid={ `${index}-horizontal-done-date` }>{recipe.doneDate}</p>
 
             <button
-              data-testid={ `${index}-horizontal-share-btn` }
+
               onClick={ () => shareButton(recipe.id, recipe.type, index) }
             >
               <img
@@ -115,6 +116,7 @@ function DoneRecipes() {
                 src="src/images/shareIcon.svg"
                 alt="Share recipe"
               />
+              {index === msgIndex && <span>Link copied!</span>}
             </button>
 
             {recipe.tags.map((tag) => (
@@ -125,7 +127,6 @@ function DoneRecipes() {
                 {tag}
               </span>
             ))}
-            {index === msgIndex && <span>Link copiado!</span>}
           </div>
         ))}
 
