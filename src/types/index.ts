@@ -26,3 +26,27 @@ export type DoneRecipesProps = {
   type: 'meal' | 'drink',
   tags: string[],
 };
+
+export type Recipe = {
+  [x: string]: string
+};
+
+export type RecipeKeys = {
+  name: string,
+  id: string,
+  image: string
+  category: string,
+  ingredients: string,
+  instructions: string
+  video: string
+};
+
+export const RecipeInitialValue = {
+  name: '',
+  id: '',
+  image: '',
+  category: '',
+  ingredients: '',
+  instructions: '',
+  video: '',
+};

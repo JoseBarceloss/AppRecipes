@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import iconPerfil from '../../images/profileIcon.svg';
 // import searchIcon from '../../images/searchIcon.svg';
 import SearchBar from '../SearchBar';
+import { Recipe } from '../../types';
 // import { pathsWithoutSearchIcon } from '../../types';
 
-function Header() {
+type HeaderProps = {
+  setRecipes?: React.Dispatch<React.SetStateAction<Recipe[]>> | null
+};
+
+function Header({ setRecipes = null }: HeaderProps) {
   // const [searchInput, setSearchInput] = React.useState(false); retirado do componente
-  const [titlePage, setTitlePage] = React.useState('');
+  const [titlePage, setTitlePage] = useState('');
   const { pathname } = useLocation();
   /**
 |--------------------------------------------------
@@ -18,7 +23,8 @@ function Header() {
   const shouldShowSearchIcon = () => {
     return !['/profile', '/done-recipes', '/favorite-recipes'].includes(pathname);
   };
-  React.useEffect(() => {
+
+  useEffect(() => {
     switch (pathname) {
       case '/drinks':
         setTitlePage('Drinks');
@@ -58,7 +64,7 @@ function Header() {
           : (<h1 data-testid="page-title">{titlePage}</h1>)}
         {shouldShowSearchIcon() && (
           <span>
-            <SearchBar />
+            <SearchBar setRecipes={ setRecipes } />
           </span>
         )}
       </div>
