@@ -86,7 +86,6 @@ function RecipeDetails() {
 
   const copyToClipboard = () => {
     const recipeLink = window.location.href;
-
     navigator.clipboard.writeText(recipeLink).then(() => {
       setLinkCopiedMessage(true);
       setTimeout(() => {
@@ -116,21 +115,19 @@ function RecipeDetails() {
   const toggleFavorito = () => {
     const receitaFavorita = criarObjetoDeReceita();
     const receitasFavoritas = JSON.parse(localStorage.getItem('favoriteRecipes') || '[]');
-
     const novaListaFavorita = favoritado
       ? receitasFavoritas.filter((recipe: any) => recipe.id !== receitaFavorita.id)
       : [...receitasFavoritas, receitaFavorita];
-
     localStorage.setItem('favoriteRecipes', JSON.stringify(novaListaFavorita));
     setFavoritado(!favoritado);
   };
+
   function criarObjetoDeReceita() {
     const data = recipeData;
     const hoje = new Date();
     const dia = hoje.getDate();
     const mes = hoje.getMonth() + 1;
     const ano = hoje.getFullYear();
-
     const dataAtualFormatada = `${ano}-${mes < 10 ? `0${mes}`
       : mes}-${dia < 10 ? `0${dia}` : dia}`;
     return {
