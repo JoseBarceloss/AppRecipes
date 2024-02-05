@@ -107,7 +107,7 @@ function RecipeDetails() {
     setFavoritado(!favoritado);
   };
 
-  console.log(recipeData);
+  // console.log(recipeData);
 
   function criarObjetoDeReceita() {
     const data = recipeData;
