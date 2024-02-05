@@ -3,12 +3,8 @@ import { Link } from 'react-router-dom';
 import Header from '../../Components/Header';
 import { Recipe } from '../../types';
 import Footer from '../../Components/Footer';
-
-import Header from '../../Components/Header';
-
 import FilterButtons from '../../Components/FilterButtons';
 import fetchFirst12Recipes from '../../utils/fetchFirst12Recipes';
-
 
 function Recipes() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
