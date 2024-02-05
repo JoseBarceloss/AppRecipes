@@ -1,9 +1,13 @@
-import React, { useContext, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import RecipesContext from '../../context/AppRecipesContext';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import searchIcon from '../../images/searchIcon.svg';
+import { Recipe } from '../../types';
 
-function SearchBar() {
+type SearchBarProps = {
+  setRecipes?: React.Dispatch<React.SetStateAction<Recipe[]>> | null
+};
+
+function SearchBar({ setRecipes = null }: SearchBarProps) {
   /**
   |--------------------------------------------------
   | ESTADOS
@@ -12,8 +16,7 @@ function SearchBar() {
   const [searchInput, setSearchInput] = useState(false);
   const [searchOption, setSearchOption] = useState('');
   const [searchData, setSearchData] = useState('');
-  const { recipes, setRecipes } = useContext(RecipesContext);
-  const location = useLocation();
+  const place = window.location.pathname.split('/')[1];
   const navigate = useNavigate();
   /**
 |--------------------------------------------------
@@ -33,6 +36,7 @@ function SearchBar() {
   const handleRadioButton = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchOption(e.target.value);
   };
+
   const handleSearch = async () => {
     if (searchOption === FIRST_LETTER && searchData.length !== 1) {
       window.alert(ALERT_MESSAGE_ONE_CHAR);
@@ -40,7 +44,7 @@ function SearchBar() {
     }
 
     let endpoint = '';
-    const baseEndpoint = location.pathname.includes('drinks') ? 'https://www.thecocktaildb.com/api/json/v1/1' : 'https://www.themealdb.com/api/json/v1/1';
+    const baseEndpoint = place === 'drinks' ? 'https://www.thecocktaildb.com/api/json/v1/1' : 'https://www.themealdb.com/api/json/v1/1';
 
     if (searchOption === INGREDIENT) {
       endpoint = `${baseEndpoint}/filter.php?i=${searchData}`;
@@ -56,21 +60,23 @@ function SearchBar() {
         throw new Error(response.statusText);
       }
       const data = await response.json();
-      const results = data.meals || data.drinks;
-      setRecipes(results);
+      const results = data[place];
+      if (results && setRecipes) {
+        setRecipes(results);
+      }
 
       if (results && results.length === 1) {
-        const path = location.pathname.includes('drinks')
-          ? `/drinks/${results[0].idDrink}` : `/meals/${results[0].idMeal}`;
+        const path = place === 'drinks' ? `/drinks/${results[0].idDrink}`
+          : `/meals/${results[0].idMeal}`;
         navigate(path);
-      } else if (!results || results.length === 0) {
+      } else if (!results) {
         window.alert(ALERT_MESSAGE_FOUND);
       }
     } catch (error) {
       console.error(error);
     }
-    console.log(recipes);
   };
+
   return (
     <div>
       {searchInput && (

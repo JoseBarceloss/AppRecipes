@@ -1,118 +1,66 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useRecipes } from '../../hooks/useRecipes';
-import { useCategories } from '../../hooks/useCategories';
+import Header from '../../Components/Header';
+import { Recipe } from '../../types';
 import Footer from '../../Components/Footer';
+
 import Header from '../../Components/Header';
 
-function Recipes({ isDrinks }: { isDrinks: boolean }) {
-  const { recipes, setRecipes } = useRecipes(isDrinks);
-  const categories = useCategories(isDrinks);
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [initialRecipes, setInitialRecipes] = useState<any[]>([]);
+import FilterButtons from '../../Components/FilterButtons';
+import fetchFirst12Recipes from '../../utils/fetchFirst12Recipes';
 
-  const handleClick = (event: any) => {
-    const category = event.target.value;
-    setSelectedCategory((prevCategory) => (prevCategory === category
-      ? handleClearFilter() : category));
-  };
 
-  const handleClearFilter = () => {
-    setSelectedCategory('');
-    setRecipes(initialRecipes);
+function Recipes() {
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [recipesKey, setRecipesKeys] = useState({ image: '', name: '', id: '' });
+  // const navigate = useNavigate();
+  const { name, image, id } = recipesKey;
+  const place = window.location.pathname.split('/')[1];
+
+  const set12First = async () => {
+    const TwelveFirst = await fetchFirst12Recipes(place);
+    setRecipes(TwelveFirst);
   };
 
   useEffect(() => {
-    if (selectedCategory === '') return;
-    if (isDrinks) {
-      setInitialRecipes(recipes);
-      fetch(
-        `https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=${selectedCategory}`,
-      )
-        .then((response) => response.json())
-        .then((data) => data.drinks.slice(0, 12))
-        .then((data) => setRecipes(data));
-    } else {
-      setInitialRecipes(recipes);
-      fetch(
-        `https://www.themealdb.com/api/json/v1/1/filter.php?c=${selectedCategory}`,
-      )
-        .then((response) => response.json())
-        .then((data) => data.meals.slice(0, 12))
-        .then((data) => setRecipes(data));
-    }
-  }, [selectedCategory]);
+    set12First();
+    const actualImage = place === 'meals' ? 'strMealThumb' : 'strDrinkThumb';
+    const actualName = place === 'meals' ? 'strMeal' : 'strDrink';
+    const actaulID = place === 'meals' ? 'idMeal' : 'idDrink';
 
-  if (isDrinks) {
-    return (
-      <div>
-        <Header />
-        {/* <h1>Drinks</h1> */}
-        {categories.map((category, index) => (
-          <button
-            key={ index }
-            type="button"
-            value={ category.strCategory }
-            data-testid={ `${category.strCategory}-category-filter` }
-            onClick={ handleClick }
-          >
-            {category.strCategory}
-          </button>
-        ))}
-        <button data-testid="All-category-filter" onClick={ handleClearFilter }>
-          All
-        </button>
-        {recipes.map((recipe, index) => (
-          <div data-testid={ `${index}-recipe-card` } key={ recipe.idDrink }>
-            <Link to={ `/drinks/${recipe.idDrink}` }>
-              <h1 data-testid={ `${index}-card-name` }>{recipe.strDrink}</h1>
-              <img
-                data-testid={ `${index}-card-img` }
-                src={ recipe.strDrinkThumb }
-                alt={ recipe.strDrink }
-              />
-            </Link>
-          </div>
-        ))}
-        <Footer />
-      </div>
-    );
-  }
+    setRecipesKeys({
+      image: actualImage,
+      name: actualName,
+      id: actaulID,
+    });
+  }, [place]);
+
   return (
     <div>
-      <Header />
-      {/* <h1>Meals</h1> */}
-      {categories.map((category, index) => (
-        <button
-          key={ index }
-          type="button"
-          value={ category.strCategory }
-          data-testid={ `${category.strCategory}-category-filter` }
-          onClick={ handleClick }
-        >
-          {category.strCategory}
-        </button>
-      ))}
-      <button data-testid="All-category-filter" onClick={ handleClearFilter }>
-        All
-      </button>
+      <Header setRecipes={ setRecipes } />
+      <FilterButtons
+        place={ place }
+        setRecipes={ setRecipes }
+        set12First={ set12First }
+      />
       {recipes.map((recipe, index) => (
-        <div data-testid={ `${index}-recipe-card` } key={ recipe.idMeal }>
-          <Link to={ `/meals/${recipe.idMeal}` }>
-            <h1 data-testid={ `${index}-card-name` }>{recipe.strMeal}</h1>
-            <img
-              data-testid={ `${index}-card-img` }
-              src={ recipe.strMealThumb }
-              alt={ recipe.strMeal }
-            />
-          </Link>
-        </div>
+        <Link
+          to={ `/${place}/${recipe[id]}` }
+          key={ index }
+          // onClick={ () => navigate(`/${place}/${recipe[id]}`) }
+          data-testid={ `${index}-recipe-card` }
+        >
+          <p data-testid={ `${index}-card-name` }>{recipe[name]}</p>
+          <img
+            src={ recipe[image] }
+            alt="Foto da receita"
+            data-testid={ `${index}-card-img` }
+          />
+        </Link>
       ))}
       <Footer />
     </div>
   );
 }
-
-// b
 
 export default Recipes;
