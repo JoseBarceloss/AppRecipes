@@ -42,13 +42,22 @@ function RecipeDetails() {
       apiUrl = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`;
     }
 
-    const result = await fetch(apiUrl);
-    if (result.ok) {
+    try {
+      const result = await fetch(apiUrl);
+
+      if (!result.ok) {
+        throw new Error(`Error fetching data: ${result.statusText}`);
+      }
+
       const response = await result.json();
-      console.log(response);
+
       if (response.meals || response.drinks) {
         setRecipeData(response.meals ? response.meals[0] : response.drinks[0]);
+      } else {
+        console.error('Invalid response:', response);
       }
+    } catch (error) {
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -115,10 +124,8 @@ function RecipeDetails() {
     localStorage.setItem('favoriteRecipes', JSON.stringify(novaListaFavorita));
     setFavoritado(!favoritado);
   };
-
   function criarObjetoDeReceita() {
     const data = recipeData;
-
     const hoje = new Date();
     const dia = hoje.getDate();
     const mes = hoje.getMonth() + 1;
@@ -126,7 +133,6 @@ function RecipeDetails() {
 
     const dataAtualFormatada = `${ano}-${mes < 10 ? `0${mes}`
       : mes}-${dia < 10 ? `0${dia}` : dia}`;
-
     return {
       id: window.location.pathname.split('/')[2],
       type: window.location.pathname.split('/')[1] === 'meals' ? 'meal' : 'drink',
@@ -137,7 +143,6 @@ function RecipeDetails() {
       image: data?.strDrinkThumb || data?.strMealThumb,
     };
   }
-
   return (
     <div>
       {linkCopiedMessage && <p data-testid="link-copied-message">Link copied!</p>}
