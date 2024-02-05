@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useRecipes } from '../../hooks/useRecipes';
 import { useCategories } from '../../hooks/useCategories';
 import Footer from '../../Components/Footer';
+import Header from '../../Components/Header';
 
 function Recipes({ isDrinks }: { isDrinks: boolean }) {
   const { recipes, setRecipes } = useRecipes(isDrinks);
@@ -45,7 +46,8 @@ function Recipes({ isDrinks }: { isDrinks: boolean }) {
   if (isDrinks) {
     return (
       <div>
-        <h1>Drinks</h1>
+        <Header />
+        {/* <h1>Drinks</h1> */}
         {categories.map((category, index) => (
           <button
             key={ index }
@@ -78,7 +80,8 @@ function Recipes({ isDrinks }: { isDrinks: boolean }) {
   }
   return (
     <div>
-      <h1>Meals</h1>
+      <Header />
+      {/* <h1>Meals</h1> */}
       {categories.map((category, index) => (
         <button
           key={ index }

@@ -1,0 +1,11 @@
+body {
+    /* background-color: aquamarine; */
+}
+
+input:checked + span{
+    text-decoration: line-through solid rgb(0, 0, 0);
+}
+
+#markcheckbox {
+    text-decoration: line-through solid rgb(0, 0, 0);
+}
