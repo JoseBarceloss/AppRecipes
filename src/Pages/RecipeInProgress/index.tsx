@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DataProp, Ingredient } from '../../types';
 import shareIcon from '../../images/shareIcon.svg';
 import blackHeartIcon from '../../images/blackHeartIcon.svg';
 import whiteHeartIcon from '../../images/whiteHeartIcon.svg';
 import './index.css';
+import { criarObjetoDeReceita } from './utils';
 
 function RecipeInProgress() {
+  const navigate = useNavigate();
+
   const [recipe, setRecipe] = useState<DataProp | null>(null);
   const [recipeType, setRecipeType] = useState('');
   const [ingredients, setIngredients] = useState<any>([]);
@@ -27,10 +31,23 @@ function RecipeInProgress() {
   };
 
   const handleFinishDisable = () => {
-    // const getCheckboxs = document.querySelectorAll('markcheckbox');
-    // const verificaChecados = getCheckboxs.every((item) => item.checked);
-    // console.log(verificaChecados);
-    console.log();
+    const doneRecipes = JSON.parse(localStorage.getItem('doneRecipes') || '[]');
+    const newDoneRecipe = {
+      id: recipe?.idMeal || recipe?.idDrink,
+      type: recipe?.idMeal ? 'meal' : 'drink',
+      nationality: recipe?.strArea || '',
+      category: recipe?.strCategory || '',
+      alcoholicOrNot: recipe?.strAlcoholic || '',
+      name: recipe?.strMeal || recipe?.strDrink,
+      image: recipe?.strMealThumb || recipe?.strDrinkThumb,
+      doneDate: new Date(),
+      tags: recipe?.strTags?.split(',') || [],
+    };
+
+    doneRecipes.push(newDoneRecipe);
+    localStorage.setItem('doneRecipes', JSON.stringify(doneRecipes));
+
+    navigate('/done-recipes');
   };
 
   const getStoredMarkedIngs = () => {
@@ -59,30 +76,8 @@ function RecipeInProgress() {
     });
   };
 
-  const criarObjetoDeReceita = () => {
-    const data = recipe;
-
-    const hoje = new Date();
-    const dia = hoje.getDate();
-    const mes = hoje.getMonth() + 1;
-    const ano = hoje.getFullYear();
-
-    const dataAtualFormatada = `${ano}-${mes < 10 ? `0${mes}`
-      : mes}-${dia < 10 ? `0${dia}` : dia}`;
-
-    return {
-      id: window.location.pathname.split('/')[2],
-      type: window.location.pathname.split('/')[1] === 'meals' ? 'meal' : 'drink',
-      nationality: data?.strArea || '',
-      category: data?.strCategory || '',
-      alcoholicOrNot: data?.strAlcoholic || '',
-      name: data?.strDrink || data?.strMeal,
-      image: data?.strDrinkThumb || data?.strMealThumb,
-    };
-  };
-
   const toggleFavorito = () => {
-    const receitaFavorita = criarObjetoDeReceita();
+    const receitaFavorita = criarObjetoDeReceita(recipe);
     const receitasFavoritas = JSON.parse(localStorage.getItem('favoriteRecipes') || '[]');
     const novaListaFavorita = favoritado
       ? receitasFavoritas.filter((recip: any) => recip.id !== receitaFavorita.id)
