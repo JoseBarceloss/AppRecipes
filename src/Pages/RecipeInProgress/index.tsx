@@ -8,7 +8,7 @@ import './index.css';
 function RecipeInProgress() {
   const [recipe, setRecipe] = useState<DataProp | null>(null);
   const [recipeType, setRecipeType] = useState('');
-  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [ingredients, setIngredients] = useState<any>([]);
   const [markedIngs, setMarkedIngs] = useState<any>([]);
   const [linkCopiedMessage, setLinkCopiedMessage] = useState<boolean>(false);
   const [favoritado, setFavoritado] = useState(false);
@@ -26,6 +26,13 @@ function RecipeInProgress() {
     setIngredients(ingArray);
   };
 
+  const handleFinishDisable = () => {
+    // const getCheckboxs = document.querySelectorAll('markcheckbox');
+    // const verificaChecados = getCheckboxs.every((item) => item.checked);
+    // console.log(verificaChecados);
+    console.log();
+  };
+
   const getStoredMarkedIngs = () => {
     const getList = JSON.parse(localStorage.getItem('markedItens') || '[]');
     setMarkedIngs(getList);
@@ -35,12 +42,9 @@ function RecipeInProgress() {
     const getFav = JSON.parse(localStorage.getItem('favoriteRecipes') || '[]');
     setFavRecipe(getFav);
     if (getFav.length > 0) {
-      console.log('primeiro if');
-
       setFavoritado(true);
     }
     if (getFav.length === 0) {
-      console.log('segundo if');
       setFavoritado(false);
     }
   };
@@ -132,11 +136,10 @@ function RecipeInProgress() {
           <input
             name={ ing }
             id="markcheckbox"
+            className="markcheckbox"
             type="checkbox"
             checked={ markedIngs.some((markedName:any) => markedName === ing) }
             onClick={ ({ target }:any) => {
-              console.log(target.checked);
-
               if (target.checked) {
                 target
                   .parentNode
@@ -150,8 +153,6 @@ function RecipeInProgress() {
                 target.parentNode.style.textDecoration = 'none';
                 const filterIngs = markedIngs.filter((marked:string) => marked !== ing);
                 setMarkedIngs(filterIngs);
-                console.log(filterIngs);
-
                 localStorage.setItem('markedItens', JSON.stringify(filterIngs));
               }
             } }
@@ -175,7 +176,16 @@ function RecipeInProgress() {
           alt={ favoritado ? 'black-heart' : 'white-heart' }
         />
       </button>
-      <button type="button" data-testid="finish-recipe-btn">Finalizar</button>
+      <button
+        type="button"
+        data-testid="finish-recipe-btn"
+        disabled={
+          markedIngs.length < ingredients.filter((ing:any) => ing !== '').length
+}
+        onClick={ handleFinishDisable }
+      >
+        Finalizar
+      </button>
     </section>
   );
 }
