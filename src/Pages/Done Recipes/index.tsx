@@ -108,7 +108,6 @@ function DoneRecipes() {
             <p data-testid={ `${index}-horizontal-done-date` }>{recipe.doneDate}</p>
 
             <button
-
               onClick={ () => shareButton(recipe.id, recipe.type, index) }
             >
               <img
