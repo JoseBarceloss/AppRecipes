@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Header from '../../Components/Header';
 import { Recipe } from '../../types';
 import Footer from '../../Components/Footer';
@@ -9,7 +9,7 @@ import fetchFirst12Recipes from '../../utils/fetchFirst12Recipes';
 function Recipes() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [recipesKey, setRecipesKeys] = useState({ image: '', name: '', id: '' });
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { name, image, id } = recipesKey;
   const place = window.location.pathname.split('/')[1];
 
@@ -40,9 +40,10 @@ function Recipes() {
         set12First={ set12First }
       />
       {recipes.map((recipe, index) => (
-        <button
+        <Link
+          to={ `/${place}/${recipe[id]}` }
           key={ index }
-          onClick={ () => navigate(`/${place}/${recipe[id]}`) }
+          // onClick={ () => navigate(`/${place}/${recipe[id]}`) }
           data-testid={ `${index}-recipe-card` }
         >
           <p data-testid={ `${index}-card-name` }>{recipe[name]}</p>
@@ -51,7 +52,7 @@ function Recipes() {
             alt="Foto da receita"
             data-testid={ `${index}-card-img` }
           />
-        </button>
+        </Link>
       ))}
       <Footer />
     </div>
