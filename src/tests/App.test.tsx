@@ -13,6 +13,9 @@ import Recipes from '../Pages/Recipes';
 import mealsByIngredient from './mocks/meals.mock';
 import renderWithRouter from './helpers/renderWithRouter';
 
+const seacrbtn = 'exec-search-btn';
+const seachtop = 'search-top-btn';
+
 describe('Componente de login', () => {
   let component: RenderResult;
 
@@ -158,13 +161,13 @@ describe('SearchBar', () => {
       </MemoryRouter>,
     );
 
-    const searchBtn = screen.getByTestId('search-top-btn');
+    const searchBtn = screen.getByTestId(seachtop);
     expect(searchBtn).toBeInTheDocument();
     await userEvent.click(searchBtn);
     const input1 = screen.getByTestId('ingredient-search-radio');
     const input2 = screen.getByTestId('name-search-radio');
     const input3 = screen.getByTestId('first-letter-search-radio');
-    const btn = screen.getByTestId('exec-search-btn');
+    const btn = screen.getByTestId(seacrbtn);
     expect(input1).toBeInTheDocument();
     expect(input2).toBeInTheDocument();
     expect(input3).toBeInTheDocument();
@@ -172,13 +175,13 @@ describe('SearchBar', () => {
   });
   it('Testa o ingrediente', async () => {
     renderWithRouter(<App />, { route: '/meals' });
-    const searchBtn = screen.getByTestId('search-top-btn');
+    const searchBtn = screen.getByTestId(seachtop);
     await userEvent.click(searchBtn);
     const search = screen.getByTestId('search-input');
     await userEvent.type(search, 'Chicken');
     const input1 = screen.getByTestId('ingredient-search-radio');
     await userEvent.click(input1);
-    const btn = screen.getByTestId('exec-search-btn');
+    const btn = screen.getByTestId(seacrbtn);
     await userEvent.click(btn);
     expect(await screen.findByText('Chicken Congee')).toBeInTheDocument();
   });
@@ -186,13 +189,13 @@ describe('SearchBar', () => {
   it('testa o alert', async () => {
     vi.spyOn(window, 'alert');
     renderWithRouter(<App />, { route: '/meals' });
-    const searchBtn = screen.getByTestId('search-top-btn');
+    const searchBtn = screen.getByTestId(seachtop);
     await userEvent.click(searchBtn);
     const search = screen.getByTestId('search-input');
     await userEvent.type(search, 'asdasasdasdasd');
     const input3 = screen.getByTestId('first-letter-search-radio');
     await userEvent.click(input3);
-    const btn = screen.getByTestId('exec-search-btn');
+    const btn = screen.getByTestId(seacrbtn);
     await userEvent.click(btn);
     expect(window.alert).toHaveBeenCalledTimes(1);
   });
