@@ -15,7 +15,9 @@ function FilterButtons({ place, setRecipes, set12First }: FilterButtonsProps) {
   const fetchCategories = async () => {
     const response = await fetch(urlToFetch);
     const data = await response.json();
-    setCategories([...data[place].slice(0, 5), { strCategory: 'All' }]);
+    if (data[place]) {
+      setCategories([...data[place].slice(0, 5), { strCategory: 'All' }]);
+    }
   };
 
   const fetchRecipesCategory = async (category: string) => {
