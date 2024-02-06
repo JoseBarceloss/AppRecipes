@@ -1,14 +1,20 @@
 import { RenderResult, render, fireEvent, screen, waitFor } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, json } from 'react-router-dom';
 import { act } from 'react-dom/test-utils';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
+import { toBeInTheDocument } from '@testing-library/jest-dom/matchers';
 import Login from '../Pages/Login';
 import Header from '../Components/Header';
 import Profile from '../Pages/Profile';
-import RecipeDetails from '../Pages/RecipeDetails';
 import App from '../App';
 import '@testing-library/jest-dom/extend-expect';
+import Recipes from '../Pages/Recipes';
+import mealsByIngredient from './mocks/meals.mock';
+import renderWithRouter from './helpers/renderWithRouter';
+
+const seacrbtn = 'exec-search-btn';
+const seachtop = 'search-top-btn';
 
 describe('Componente de login', () => {
   let component: RenderResult;
@@ -133,5 +139,64 @@ describe('Header', () => {
     );
 
     expect(screen.getByTestId('page-title')).toHaveTextContent('Drinks');
+  });
+});
+
+describe('SearchBar', () => {
+  beforeEach(() => {
+    global.fetch = vi.fn().mockResolvedValue({
+      json: async () => (mealsByIngredient),
+    });
+    window.alert = vi.fn(() => {});
+  });
+  afterEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+  });
+
+  it('testar botao lupa SearchBar', async () => {
+    render(
+      <MemoryRouter initialEntries={ ['/meals'] }>
+        <Header />
+      </MemoryRouter>,
+    );
+
+    const searchBtn = screen.getByTestId(seachtop);
+    expect(searchBtn).toBeInTheDocument();
+    await userEvent.click(searchBtn);
+    const input1 = screen.getByTestId('ingredient-search-radio');
+    const input2 = screen.getByTestId('name-search-radio');
+    const input3 = screen.getByTestId('first-letter-search-radio');
+    const btn = screen.getByTestId(seacrbtn);
+    expect(input1).toBeInTheDocument();
+    expect(input2).toBeInTheDocument();
+    expect(input3).toBeInTheDocument();
+    expect(btn).toBeInTheDocument();
+  });
+  it('Testa o ingrediente', async () => {
+    renderWithRouter(<App />, { route: '/meals' });
+    const searchBtn = screen.getByTestId(seachtop);
+    await userEvent.click(searchBtn);
+    const search = screen.getByTestId('search-input');
+    await userEvent.type(search, 'Chicken');
+    const input1 = screen.getByTestId('ingredient-search-radio');
+    await userEvent.click(input1);
+    const btn = screen.getByTestId(seacrbtn);
+    await userEvent.click(btn);
+    expect(await screen.findByText('Chicken Congee')).toBeInTheDocument();
+  });
+
+  it('testa o alert', async () => {
+    vi.spyOn(window, 'alert');
+    renderWithRouter(<App />, { route: '/meals' });
+    const searchBtn = screen.getByTestId(seachtop);
+    await userEvent.click(searchBtn);
+    const search = screen.getByTestId('search-input');
+    await userEvent.type(search, 'asdasasdasdasd');
+    const input3 = screen.getByTestId('first-letter-search-radio');
+    await userEvent.click(input3);
+    const btn = screen.getByTestId(seacrbtn);
+    await userEvent.click(btn);
+    expect(window.alert).toHaveBeenCalledTimes(1);
   });
 });

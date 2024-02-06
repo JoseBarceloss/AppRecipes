@@ -39,7 +39,7 @@ function Recipes() {
         setRecipes={ setRecipes }
         set12First={ set12First }
       />
-      {recipes.map((recipe, index) => (
+      {recipes && recipes.map((recipe, index) => (
         <Link
           to={ `/${place}/${recipe[id]}` }
           key={ index }
