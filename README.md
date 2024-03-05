@@ -1,6 +1,8 @@
 # App de Receitas
 
-![Receitas Aconchegantes](https://64.media.tumblr.com/5036b50ddffa4c6d67a0c19ebd46c601/tumblr_peeixeLjmz1tdnbbbo1_540.gif)
+<p align="center">
+  <img src="https://64.media.tumblr.com/5036b50ddffa4c6d67a0c19ebd46c601/tumblr_peeixeLjmz1tdnbbbo1_540.gif" width="900" height="350">
+</p>
 
 Este é um projeto de um aplicativo de receitas desenvolvido em equipe com 6 pessoas. Fiquei responsável pelos últimos 20 requisitos do projeto, que envolvem a implementação de diversas funcionalidades utilizando React e testes.
 
